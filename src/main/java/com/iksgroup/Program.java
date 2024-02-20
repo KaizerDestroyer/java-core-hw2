@@ -20,8 +20,8 @@ public class Program {
      * Инициализация объектов игры
      */
     static void initialize(){
-        fieldSizeX = 3;
-        fieldSizeY = 3;
+        fieldSizeX = 5;
+        fieldSizeY = 5;
         field = new char[fieldSizeX][fieldSizeY];
 
         for (int x = 0; x < fieldSizeX; x++){
@@ -124,20 +124,14 @@ public class Program {
      * @return результат проверки победы
      */
     static boolean checkWin(char dot){
-        // Проверка по трем горизонталям
-        if (field[0][0] == dot && field[0][1] == dot && field[0][2] == dot) return true;
-        if (field[1][0] == dot && field[1][1] == dot && field[1][2] == dot) return true;
-        if (field[2][0] == dot && field[2][1] == dot && field[2][2] == dot) return true;
-
-        // Проверка по трем вертикалям
-        if (field[0][0] == dot && field[1][0] == dot && field[2][0] == dot) return true;
-        if (field[0][1] == dot && field[1][1] == dot && field[2][1] == dot) return true;
-        if (field[0][2] == dot && field[1][2] == dot && field[2][2] == dot) return true;
-
-        // Проверка по двум диагоналям
-        if (field[0][0] == dot && field[1][1] == dot && field[2][2] == dot) return true;
-        if (field[0][2] == dot && field[1][1] == dot && field[2][0] == dot) return true;
-
+//        Проходимся по полю X
+        for (int i = 0; i < fieldSizeX; i++) {
+//            Проходимся по полю Y
+            for (int j = 0; j < fieldSizeY; j++) {
+                if (check1(i,j,dot,WIN_COUNT) || check2(i,j,dot,WIN_COUNT) || check3(i,j,dot,WIN_COUNT) || check4(i,j,dot,WIN_COUNT))
+                    return true;
+            }
+        }
         return false;
     }
 
@@ -151,19 +145,46 @@ public class Program {
     }
 
     static boolean check1(int x, int y, char dot, int win){
-        //if (field[x][y + 1] == dot && field[x][y + 2] == dot && field[x][y + 3] == dot)
+        if (y + win <= fieldSizeY) {
+            for (int i = 0; i < win; i++) {
+                if (field[x][y + i] != dot)
+                    return false;
+            }
+            return true;
+        }
         return false;
     }
 
     static boolean check2(int x, int y, char dot, int win){
+        if (x + win <= fieldSizeX) {
+            for (int i = 0; i < win; i++) {
+                if (field[x+i][y] != dot)
+                    return false;
+            }
+            return true;
+        }
         return false;
     }
 
     static boolean check3(int x, int y, char dot, int win){
+        if (y + win <= fieldSizeY && x + win <= fieldSizeX) {
+            for (int i = 0; i < win; i++) {
+                if (field[x+i][y + i] != dot)
+                    return false;
+            }
+            return true;
+        }
         return false;
     }
 
     static boolean check4(int x, int y, char dot, int win){
+        if (y + win <= fieldSizeY && x - win + 1 >= 0) {
+            for (int i = 0; i < win; i++) {
+                if (field[x-i][y + i] != dot)
+                    return false;
+            }
+            return true;
+        }
         return false;
     }
 
@@ -198,10 +219,10 @@ public class Program {
                     break;
                 aiTurn();
                 printField();
-                if (checkState(DOT_AI, "Вы победили!"))
+                if (checkState(DOT_AI, "Соперник победил!"))
                     break;
             }
-            System.out.print("Желаете сыграть еще раз? (Y - да): ");
+            System.out.print("Желаете сыграть еще раз? (Y - да, N - нет): ");
             if(!scanner.next().equalsIgnoreCase("Y"))
                 break;
         }
